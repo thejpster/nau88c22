@@ -10,3 +10,5 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+embedded-hal = "1.0.0-rc.1"
+bitfield = "0.14"
