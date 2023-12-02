@@ -1158,80 +1158,416 @@ bitfield! {
 }
 
 bitfield! {
-    /// Device Revision # register contents
+    /// Device Revision register contents
+    ///
+    /// See [`read_devicerevisionno`](crate::Codec::read_devicerevisionno),
+    /// [`write_devicerevisionno`](crate::Codec::write_devicerevisionno) and
+    /// [`modify_devicerevisionno`](crate::Codec::modify_devicerevisionno)
     pub struct DeviceRevisionNo(u16);
     impl Debug;
-
+    u8;
+    /// Chip Revision.
+    ///
+    /// * Will be `0x7F` for Revision A.
+    pub revision, _: 7, 0;
 }
 
 bitfield! {
     /// Device ID register contents
+    ///
+    /// See [`read_deviceid`](crate::Codec::read_deviceid),
+    /// [`write_deviceid`](crate::Codec::write_deviceid) and
+    /// [`modify_deviceid`](crate::Codec::modify_deviceid)
     pub struct DeviceId(u16);
     impl Debug;
+    u16;
+    /// Device ID.
+    ///
+    /// Will be `0x01A`
+    pub device_id, _: 8, 0;
+}
 
 }
 
 bitfield! {
     /// ALC Enhancements 1 register contents
+    ///
+    /// See [`read_alcenhancements1`](crate::Codec::read_alcenhancements1),
+    /// [`write_alcenhancements1`](crate::Codec::write_alcenhancements1) and
+    /// [`modify_alcenhancements1`](crate::Codec::modify_alcenhancements1)
     pub struct AlcEnhancements1(u16);
     impl Debug;
-
+    u8;
+    /// Selects one of two tables used to set the target level for the ALC
+    ///
+    /// * `false` = default recommended target level table spanning -1.5dB through
+    /// -22.5dB FS
+    /// * `true` = optional ALC target level table spanning -6.0dB through -28.5dB
+    ///   FS
+    pub alctblsel, set_alctblsel: 8;
+    /// Choose peak or peak-to-peak value for ALC threshold logic
+    ///
+    /// * `false` = use rectified peak detector output value
+    /// * `true` = use peak-to-peak detector output value
+    pub alcpksel, set_alcpksel: 7;
+    /// Choose peak or peak-to-peak value for Noise Gate threshold logic
+    ///
+    /// * `false` = use rectified peak detector output value
+    /// * `true` = use peak-to-peak detector output value
+    pub alcngsel, set_alcngsel: 6;
+    /// Real time readout of instantaneous gain value used by left channel PGA
+    pub alcgainl, _: 5, 0;
 }
 
 bitfield! {
     /// ALC Enhancements 2 register contents
+    ///
+    /// See [`read_alcenhancements2`](crate::Codec::read_alcenhancements2),
+    /// [`write_alcenhancements2`](crate::Codec::write_alcenhancements2) and
+    /// [`modify_alcenhancements2`](crate::Codec::modify_alcenhancements2)
     pub struct AlcEnhancements2(u16);
     impl Debug;
-
+    u8;
+    /// Enable control for ALC fast peak limiter function
+    ///
+    /// * `false` = enabled (default)
+    /// * `true` = disabled
+    pub pklimena, set_pklimena: 8;
+    /// Real time readout of instantaneous gain value used by right channel PGA
+    pub alcgainl, _: 5, 0;
 }
 
 bitfield! {
     /// Misc Controls register contents
+    ///
+    /// See [`read_misccontrols`](crate::Codec::read_misccontrols),
+    /// [`write_misccontrols`](crate::Codec::write_misccontrols) and
+    /// [`modify_misccontrols`](crate::Codec::modify_misccontrols)
     pub struct MiscControls(u16);
     impl Debug;
-
+    u8;
+    /// Set SPI control bus mode regardless of state of Mode pin
+    ///
+    /// * `false` = normal operation (default)
+    /// * `true` = force SPI 4-wire mode regardless of state of Mode pin
+    pub fwspiena, set_fwspiena: 8;
+    /// Short frame sync detection period value
+    ///
+    /// * `0` = trigger if frame time less than 255 MCLK edges
+    /// * `1` = trigger if frame time less than 253 MCLK edges
+    /// * `2` = trigger if frame time less than 254 MCLK edges
+    /// * `3` = trigger if frame time less than 255 MCLK edges
+    pub fserrval, set_fserrval: 7, 6;
+    /// Enable DSP state flush on short frame sync event
+    ///
+    /// * `false` = ignore short frame sync events (default)
+    /// * `true` = set DSP state to initial conditions on short frame sync event
+    pub fserflsh, set_fserflsh: 5;
+    /// Enable control for short frame cycle detection logic
+    ///
+    /// * `false` = short frame cycle detection logic enabled
+    /// * `true` = short frame cycle detection logic disabled
+    pub fserrena, set_fserrena: 4;
+    /// Enable control to delay use of notch filter output when filter is
+    /// enabled
+    ///
+    /// * `false` = delay using notch filter output 512 sample times after notch
+    ///   enabled (default)
+    /// * `true` = use notch filter output immediately after notch filter is
+    ///   enabled
+    pub notchdly, set_notchdly: 3;
+    /// Enable control to mute DAC limiter output when softmute is enabled
+    ///
+    /// * `false` = DAC limiter output may not move to exactly zero during Softmute
+    ///   (default)
+    /// * `true` = DAC limiter output muted to exactly zero during softmute
+    pub dacinmute, set_dacinmute: 2;
+    /// Enable control to use PLL output when PLL is not in phase locked
+    /// condition
+    ///
+    /// * `false` = PLL VCO output disabled when PLL is in unlocked condition
+    ///   (default)
+    /// * `true` = PLL VCO output used as-is when PLL is in unlocked condition
+    pub plllockbp, set_plllockbp: 1;
+    /// Set DAC to use 256x oversampling rate (best at lower sample rates)
+    ///
+    /// * `false` = Use oversampling rate as determined by Register 0x0A[3]
+    ///   (default)
+    /// * `true` = Set DAC to 256x oversampling rate regardless of Register 0x0A[3]
+    pub dacosr256, set_dacosr256: 0;
 }
 
 bitfield! {
     /// Tie-Off Overrides register contents
+    ///
+    /// See [`read_tieoffoverrides`](crate::Codec::read_tieoffoverrides),
+    /// [`write_tieoffoverrides`](crate::Codec::write_tieoffoverrides) and
+    /// [`modify_tieoffoverrides`](crate::Codec::modify_tieoffoverrides)
     pub struct TieOffOverrides(u16);
     impl Debug;
-
+    u8;
+    /// Enable direct control over input tie-off resistor switching
+    ///
+    /// * `false` = ignore Register 0x4A bits to control input tie-off resistor
+    ///   switching
+    /// * `true` = use Register 0x4A bits to override automatic tie-off resistor
+    ///   switching
+    pub maninena, set_maninena: 8;
+    /// If MANUINEN = 1, use this bit to control right aux input tie-off
+    /// resistor switch
+    ///
+    /// * `false` = Tie-off resistor switch for RAUXIN input is forced open
+    /// * `true` = Tie-off resistor switch for RAUXIN input is forced closed
+    pub manraux, set_manraux: 7;
+    /// If MANUINEN = 1, use this bit to control right line input tie-off
+    /// resistor switch
+    ///
+    /// * `false` = Tie-off resistor switch for RLIN input is forced open
+    /// * `true` = Tie-off resistor switch for RLIN input is forced closed
+    pub manrlin, set_manrlin: 6;
+    /// If MANUINEN = 1, use this bit to control right PGA inverting input
+    /// tie-off switch
+    ///
+    /// * `false` = Tie-off resistor switch for RMICN input is forced open
+    /// * `true` = Tie-off resistor switch for RMICN input is forced closed
+    pub manrmicn, set_manrmicn: 5;
+    /// If MANUINEN =1, use this bit to control right PGA non-inverting input
+    /// tie-off switch
+    ///
+    /// * `false` = Tie-off resistor switch for RMICP input is forced open
+    /// * `true` = Tie-off resistor switch for RMICP input is forced closed
+    pub manrmicp, set_manrmicp: 4;
+    /// If MANUINEN = 1, use this bit to control left aux input tie-off resistor
+    /// switch
+    ///
+    /// * `false` = Tie-off resistor switch for LAUXIN input is forced open
+    /// * `true` = Tie-off resistor switch for RAUXIN input is forced closed
+    pub manlaux, set_manlaux: 3;
+    /// If MANUINEN = 1, use this bit to control left line input tie-off
+    /// resistor switch
+    ///
+    /// * `false` = Tie-off resistor switch for LLIN input is forced open
+    /// * `true` = Tie-off resistor switch for LLIN input is forced closed
+    pub manllin, set_manllin: 2;
+    /// If MANUINEN = 1, use this bit to control left PGA inverting input
+    /// tie-off switch
+    ///
+    /// * `false` = Tie-off resistor switch for LMICN input is forced open
+    /// * `true` = Tie-off resistor switch for LMINN input is forced closed
+    pub manlmicn, set_manlmicn: 1;
+    /// If MANUINEN = 1, use this bit to control left PGA non-inverting input
+    /// tie-off switch
+    ///
+    /// * `false` = Tie-off resistor switch for LMICP input is forced open
+    /// * `true` = Tie-off resistor switch for LMICP input is forced closed
+    pub manlmicp, set_manlmicp: 0;
 }
 
 bitfield! {
     /// Power/Tie-off Ctrl register contents
+    ///
+    /// See [`read_powertieoffctrl`](crate::Codec::read_powertieoffctrl),
+    /// [`write_powertieoffctrl`](crate::Codec::write_powertieoffctrl) and
+    /// [`modify_powertieoffctrl`](crate::Codec::modify_powertieoffctrl)
     pub struct PowerTieOffCtrl(u16);
     impl Debug;
-
+    u8;
+    /// Reduce bias current to left and right input MIX/BOOST stage
+    ///
+    /// * `false` = normal bias current
+    /// * `true` = bias current reduced by 50% for reduced power and bandwidth
+    pub ibthalfi, set_ibthalfi: 8;
+    /// Increase bias current to left and right input MIX/BOOST stage
+    ///
+    /// * `false` = normal bias current
+    /// * `true` = bias current increased by 500 microamps
+    pub ibt500up, set_ibt500up: 6;
+    /// Decrease bias current to left and right input MIX/BOOST stage
+    ///
+    /// * `false` = normal bias current
+    /// * `true` = bias current reduced by 250 microamps
+    pub ibt250dn, set_ibt250dn: 5;
+    /// Direct manual control to turn on bypass switch around input tie-off
+    /// buffer amplifier
+    ///
+    /// * `false` = normal automatic operation of bypass switch
+    /// * `true` = bypass switch in closed position when input buffer amplifier is
+    ///   disabled
+    pub maninbbp, set_maninbbp: 4;
+    /// Direct manual control to turn on switch to ground at input tie-off
+    /// buffer amp output
+    ///
+    /// * `false` = normal automatic operation of switch to ground
+    /// * `true` = switch to ground in in closed position when input buffer
+    ///   amplifier is disabled
+    pub maninpad, set_maninpad: 3;
+    /// Direct manual control of switch for Vref 600k-ohm resistor to ground
+    ///
+    /// * `false` = switch to ground controlled by Register 0x01 setting
+    /// * `true` = switch to ground in the closed position
+    pub manvrefh, set_manvrefh: 2;
+    /// Direct manual control for switch for Vref 160k-ohm resistor to ground
+    ///
+    /// * `false` = switch to ground controlled by Register 0x01 setting
+    /// * `true` = switch to ground in the closed position
+    pub manvrefm, set_manvrefm: 1;
+    /// Direct manual control for switch for Vref 6k-ohm resistor to ground
+    ///
+    /// * `false` = switch to ground controlled by Register 0x01 setting
+    /// * `true` = switch to ground in the closed position
+    pub manvrefl, set_manvrefl: 0;
 }
 
 bitfield! {
     /// P2P Detector Read register contents
+    ///
+    /// See [`read_p2pdetectorread`](crate::Codec::read_p2pdetectorread),
+    /// [`write_p2pdetectorread`](crate::Codec::write_p2pdetectorread) and
+    /// [`modify_p2pdetectorread`](crate::Codec::modify_p2pdetectorread)
     pub struct P2PDetectorRead(u16);
     impl Debug;
-
+    u16;
+    /// Read-only register which outputs the instantaneous value contained in
+    /// the peak-to-peak amplitude register used by the ALC for signal level
+    /// dependent logic. Value is highest of left or right input when both
+    /// inputs are under ALC control.
+    pub p2pval, _: 8, 0;
 }
 
 bitfield! {
     /// Peak Detector Read register contents
+    ///
+    /// See [`read_peakdetectorread`](crate::Codec::read_peakdetectorread),
+    /// [`write_peakdetectorread`](crate::Codec::write_peakdetectorread) and
+    /// [`modify_peakdetectorread`](crate::Codec::modify_peakdetectorread)
     pub struct PeakDetectorRead(u16);
     impl Debug;
-
+    /// Read-only register which outputs the instantaneous value contained in
+    /// the peak detector amplitude register used by the ALC for signal level
+    /// dependent logic. Value is highest of left or right input when both
+    /// inputs are under ALC control.
+    pub peakval, _: 8, 0;
 }
 
 bitfield! {
     /// Control and Status register contents
+    ///
+    /// See [`read_controlandstatus`](crate::Codec::read_controlandstatus),
+    /// [`write_controlandstatus`](crate::Codec::write_controlandstatus) and
+    /// [`modify_controlandstatus`](crate::Codec::modify_controlandstatus)
     pub struct ControlAndStatus(u16);
     impl Debug;
-
+    /// Select observation point used by DAC output automute feature
+    ///
+    /// * `false` = automute operates on data at the input to the DAC digital
+    ///   attenuator (default)
+    /// * `true` = automute operates on data at the DACIN input pin
+    pub amutctrl, set_amutctrl: 5;
+    /// Read-only status bit of high voltage detection circuit monitoring VDDSPK
+    /// voltage
+    ///
+    /// * `false` = voltage on VDDSPK pin measured at approximately 4.0Vdc or
+    ///   less
+    /// * `true` = voltage on VDDSPK pin measured at approximately 4.0Vdc or
+    ///   greater
+    pub hvdet, _: 4;
+    /// Read-only status bit of logic controlling the noise gate function
+    ///
+    /// * `false` = signal is greater than the noise gate threshold and ALC gain
+    ///   can change
+    /// * `true` = signal is less than the noise gate threshold and ALC gain is
+    ///   held constant
+    pub nsgate, _: 3;
+    /// Read-only status bit of analog mute function applied to DAC channels
+    ///
+    /// * `false` = not in the automute condition
+    /// * `true` = in automute condition
+    pub anamute, _: 2;
+    /// Read-only status bit of digital mute function of the left channel DAC
+    ///
+    /// * `false` = digital gain value is greater than zero
+    /// * `true` = digital gain is zero either by direct setting or operation of
+    ///   softmute function
+    pub digmutel, _: 1;
+    /// Read-only status bit of digital mute function of the left channel DAC
+    ///
+    /// * `false` = digital gain value is greater than zero
+    /// * `true` = digital gain is zero either by direct setting or operation of
+    ///   softmute function
+    pub digmuter, _: 0;
 }
 
 bitfield! {
     /// Output tie-off control register contents
+    ///
+    /// See
+    /// [`read_outputtieoffcontrol`](crate::Codec::read_outputtieoffcontrol),
+    /// [`write_outputtieoffcontrol`](crate::Codec::write_outputtieoffcontrol)
+    /// and
+    /// [`modify_outputtieoffcontrol`](crate::Codec::modify_outputtieoffcontrol)
     pub struct OutputTieOffControl(u16);
     impl Debug;
-
+    /// Enable direct control over output tie-off resistor switching
+    ///
+    /// * `false` = ignore Register 0x4F bits to control input tie-off
+    ///   resistor/buffer switching
+    /// * `true` = use Register 0x4F bits to override automatic tie-off
+    ///   resistor/buffer switching
+    pub manouten, set_manouten: 8;
+    /// If MANUOUTEN = 1, use this bit to control bypass switch around 1.5x
+    /// boosted output tie-off buffer amplifier
+    ///
+    /// * `false` = normal automatic operation of bypass switch
+    /// * `true` = bypass switch in closed position when output buffer amplifier
+    ///   is disabled
+    pub shrtbufh, set_shrtbufh: 7;
+    /// If MANUOUTEN = 1, use this bit to control bypass switch around 1.0x
+    /// non-boosted output tie-off buffer amplifier
+    ///
+    /// * `false` = normal automatic operation of bypass switch
+    /// * `true` = bypass switch in closed position when output buffer amplifier is
+    ///   disabled
+    pub shrtbufl, set_shrtbufl: 6;
+    /// If MANUOUTEN = 1, use this bit to control left speaker output tie-off
+    /// resistor switch
+    ///
+    /// * `false` = tie-off resistor switch for LSPKOUT speaker output is forced
+    ///   open
+    /// * `true` = tie-off resistor switch for LSPKOUT speaker output is forced
+    ///   closed
+    pub shrtlspk, set_shrtlspk: 5;
+    /// If MANUOUTEN = 1, use this bit to control left speaker output tie-off
+    /// resistor switch
+    ///
+    /// * `false` = tie-off resistor switch for RSPKOUT speaker output is forced
+    ///   open
+    /// * `true` = tie-off resistor switch for RSPKOUT speaker output is forced
+    ///   closed
+    pub shrtrspk, set_shrtrspk: 4;
+    /// If MANUOUTEN = 1, use this bit to control Auxout1 output tie-off
+    /// resistor switch
+    ///
+    /// * `false` = tie-off resistor switch for AUXOUT1 output is forced open
+    /// * `true` = tie-off resistor switch for AUXOUT1 output is forced closed
+    pub shrtaux1, set_shrtaux1: 3;
+    /// If MANUOUTEN = 1, use this bit to control Auxout2 output tie-off
+    /// resistor switch
+    ///
+    /// * `false` = tie-off resistor switch for AUXOUT2 output is forced open
+    /// * `true` = tie-off resistor switch for AUXOUT2 output is forced closed
+    pub shrtaux2, set_shrtaux2: 2;
+    /// If MANUOUTEN = 1, use this bit to control left headphone output tie-off
+    /// switch
+    ///
+    /// * `false` = tie-off resistor switch for LHP output is forced open
+    /// * `true` = tie-off resistor switch for LHP output is forced closed
+    pub shrtlhp, set_shrtlhp: 1;
+    /// If MANUOUTEN = 1, use this bit to control right headphone output tie-off
+    /// switch
+    ///
+    /// * `false` = tie-off resistor switch for RHP output is forced open
+    /// * `true` = tie-off resistor switch for RHP output is forced closed
+    pub shrtrhp, set_shrtrhp: 0;
 }
 
 // End of file
