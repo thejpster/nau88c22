@@ -151,6 +151,10 @@ pub enum Register {
 
 bitfield! {
     /// Power Management 1 register contents
+    ///
+    /// See [`read_powermanagement1`](crate::Codec::read_powermanagement1),
+    /// [`write_powermanagement1`](crate::Codec::write_powermanagement1) and
+    /// [`modify_powermanagement1`](crate::Codec::modify_powermanagement1)
     pub struct PowerManagement1(u16);
     impl Debug;
     u8;
@@ -200,6 +204,10 @@ bitfield! {
 
 bitfield! {
     /// Power Management 2 register contents
+    ///
+    /// See [`read_powermanagement2`](crate::Codec::read_powermanagement2),
+    /// [`write_powermanagement2`](crate::Codec::write_powermanagement2) and
+    /// [`modify_powermanagement2`](crate::Codec::modify_powermanagement2)
     pub struct PowerManagement2(u16);
     impl Debug;
     u8;
@@ -252,6 +260,10 @@ bitfield! {
 
 bitfield! {
     /// Power Management 3 register contents
+    ///
+    /// See [`read_powermanagement3`](crate::Codec::read_powermanagement3),
+    /// [`write_powermanagement3`](crate::Codec::write_powermanagement3) and
+    /// [`modify_powermanagement3`](crate::Codec::modify_powermanagement3)
     pub struct PowerManagement3(u16);
     impl Debug;
     /// AUXOUT1 analog output power control, pin#21
@@ -298,6 +310,10 @@ bitfield! {
 
 bitfield! {
     /// Audio Interface register contents
+    ///
+    /// See [`read_audiointerface`](crate::Codec::read_audiointerface),
+    /// [`write_audiointerface`](crate::Codec::write_audiointerface) and
+    /// [`modify_audiointerface`](crate::Codec::modify_audiointerface)
     pub struct AudioInterface(u16);
     impl Debug;
     u8;
@@ -316,17 +332,17 @@ bitfield! {
     pub lrp, set_lrp: 7;
     /// Word length (24-bits default) of audio data stream
     ///
-    /// * `00` = 16-bit word length
-    /// * `01` = 20-bit word length
-    /// * `10` = 24-bit word length
-    /// * `11` = 32-bit word length
+    /// * `0` = 16-bit word length
+    /// * `1` = 20-bit word length
+    /// * `2` = 24-bit word length
+    /// * `3` = 32-bit word length
     pub wlen, set_wlen: 6,5;
     /// Audio interface data format (default setting is I2S)
     ///
-    /// * `00` = right justified
-    /// * `01` = left justified
-    /// * `10` = standard I2S format
-    /// * `11` = PCMA or PCMB audio data format option
+    /// * `0` = right justified
+    /// * `1` = left justified
+    /// * `2` = standard I2S format
+    /// * `3` = PCMA or PCMB audio data format option
     pub aifmt, set_aifmt: 4,3;
     /// DAC audio data left-right ordering
     ///
@@ -370,6 +386,10 @@ impl From<u8> for CompandingMode {
 
 bitfield! {
     /// Companding register contents
+    ///
+    /// See [`read_companding`](crate::Codec::read_companding),
+    /// [`write_companding`](crate::Codec::write_companding) and
+    /// [`modify_companding`](crate::Codec::modify_companding)
     pub struct Companding(u16);
     impl Debug;
     u8;
@@ -401,6 +421,10 @@ bitfield! {
 
 bitfield! {
     /// Clock Control 1 register contents
+    ///
+    /// See [`read_clockcontrol1`](crate::Codec::read_clockcontrol1),
+    /// [`write_clockcontrol1`](crate::Codec::write_clockcontrol1) and
+    /// [`modify_clockcontrol1`](crate::Codec::modify_clockcontrol1)
     pub struct ClockControl1(u16);
     impl Debug;
     u8;
@@ -421,22 +445,27 @@ bitfield! {
     /// * `7` = divide by 12
     pub mclksel, set_mclksel: 7, 5;
     /// Scaling of output frequency at BCLK pin#8 when chip is in master mode
-    /// `0` = divide by 1
-    /// `1` = divide by 2
-    /// `2` = divide by 4
-    /// `3` = divide by 8
-    /// `4` = divide by 16
-    /// `5` = divide by 32
+    ///
+    /// * `0` = divide by 1
+    /// * `1` = divide by 2
+    /// * `2` = divide by 4
+    /// * `3` = divide by 8
+    /// * `4` = divide by 16
+    /// * `5` = divide by 32
     pub bclksel, set_bclksel: 4, 2;
     /// Enables chip master mode to drive FS and BCLK outputs
     ///
-    /// `false` = FS and BCLK are inputs
-    /// `true` = FS and BCLK are driven as outputs by internally generated clocks
+    /// * `false` = FS and BCLK are inputs
+    /// * `true` = FS and BCLK are driven as outputs by internally generated clocks
     pub clkioen, set_clkioen: 0;
 }
 
 bitfield! {
     /// Clock Control 2 register contents
+    ///
+    /// See [`read_clockcontrol2`](crate::Codec::read_clockcontrol2),
+    /// [`write_clockcontrol2`](crate::Codec::write_clockcontrol2) and
+    /// [`modify_clockcontrol2`](crate::Codec::modify_clockcontrol2)
     pub struct ClockControl2(u16);
     impl Debug;
     /// 4-wire control interface enable
@@ -503,6 +532,10 @@ impl From<u8> for Gpio1Selection {
 
 bitfield! {
     /// GPIO register contents
+    ///
+    /// See [`read_gpio`](crate::Codec::read_gpio),
+    /// [`write_gpio`](crate::Codec::write_gpio) and
+    /// [`modify_gpio`](crate::Codec::modify_gpio)
     pub struct GPIO(u16);
     impl Debug;
     u8;
@@ -515,8 +548,8 @@ bitfield! {
     pub gpio1pll, set_gpio1pll: 5, 4;
     /// GPIO1 polarity inversion control
     ///
-    /// * `0` = normal logic sense of GPIO signal
-    /// * `1` = inverted logic sense of GPIO signal
+    /// * `false` = normal logic sense of GPIO signal
+    /// * `true` = inverted logic sense of GPIO signal
     pub gpio1pl, set_gpio1pl: 3;
     /// CSB/GPIO1 function select (input default)
     ///
@@ -533,6 +566,10 @@ bitfield! {
 
 bitfield! {
     /// Jack Detect 1 register contents
+    ///
+    /// See [`read_jackdetect1`](crate::Codec::read_jackdetect1),
+    /// [`write_jackdetect1`](crate::Codec::write_jackdetect1) and
+    /// [`modify_jackdetect1`](crate::Codec::modify_jackdetect1)
     pub struct JackDetect1(u16);
     impl Debug;
     u8;
@@ -546,52 +583,60 @@ bitfield! {
     pub jckmiden, set_jckmiden: 8, 7;
     /// Jack detection feature enable
     ///
-    /// `false` = disabled
-    /// `true` = enable jack detection associated functionality
+    /// * `false` = disabled
+    /// * `true` = enable jack detection associated functionality
     pub jacden, set_jacden: 6;
     /// Select jack detect pin (GPIO1 default)
     ///
-    /// `0` = GPIO1 is used for jack detection feature
-    /// `1` = GPIO2 is used for jack detection feature
-    /// `2` = GPIO3 is used for jack detection feature
-    /// `3` = reserved
+    /// * `0` = GPIO1 is used for jack detection feature
+    /// * `1` = GPIO2 is used for jack detection feature
+    /// * `2` = GPIO3 is used for jack detection feature
+    /// * `3` = reserved
     pub jckdio, set_jckdio: 5, 4;
 }
 
 bitfield! {
     /// DAC Control register contents
+    ///
+    /// See [`read_daccontrol`](crate::Codec::read_daccontrol),
+    /// [`write_daccontrol`](crate::Codec::write_daccontrol) and
+    /// [`modify_daccontrol`](crate::Codec::modify_daccontrol)
     pub struct DACControl(u16);
     impl Debug;
     u8;
     /// Softmute feature control for DACs
     ///
-    /// `false` = disabled
-    /// `true` = enabled
+    /// * `false` = disabled
+    /// * `true` = enabled
     pub softmt, set_softmt: 6;
     /// DAC oversampling rate selection (64X default)
     ///
-    /// `false` = 64x oversampling
-    /// `true` = 128x oversampling
+    /// * `false` = 64x oversampling
+    /// * `true` = 128x oversampling
     pub dacos, set_dacos: 3;
     /// DAC automute function enable
     ///
-    /// `false` = disabled
-    /// `true` = enabled
+    /// * `false` = disabled
+    /// * `true` = enabled
     pub automt, set_automt: 2;
     /// DAC right channel output polarity control
     ///
-    /// `false` = normal polarity
-    /// `true` = inverted polarity
+    /// * `false` = normal polarity
+    /// * `true` = inverted polarity
     pub rdacpl, set_rdacpl: 1;
     /// DAC left channel output polarity control
     ///
-    /// `false` = normal polarity
-    /// `true` = inverted polarity
+    /// * `false` = normal polarity
+    /// * `true` = inverted polarity
     pub ldacpl, set_ldacpl: 0;
 }
 
 bitfield! {
     /// Left DAC Volume register contents
+    ///
+    /// See [`read_leftdacvolume`](crate::Codec::read_leftdacvolume),
+    /// [`write_leftdacvolume`](crate::Codec::write_leftdacvolume) and
+    /// [`modify_leftdacvolume`](crate::Codec::modify_leftdacvolume)
     pub struct LeftDACVolume(u16);
     impl Debug;
     u8;
@@ -615,6 +660,10 @@ bitfield! {
 
 bitfield! {
     /// Right DAC Volume register contents
+    ///
+    /// See [`read_rightdacvolume`](crate::Codec::read_rightdacvolume),
+    /// [`write_rightdacvolume`](crate::Codec::write_rightdacvolume) and
+    /// [`modify_rightdacvolume`](crate::Codec::modify_rightdacvolume)
     pub struct RightDACVolume(u16);
     impl Debug;
     /// DAC volume update bit feature. Write-only bit for synchronized L/R DAC
@@ -637,6 +686,10 @@ bitfield! {
 
 bitfield! {
     /// Jack Detect 2 register contents
+    ///
+    /// See [`read_jackdetect2`](crate::Codec::read_jackdetect2),
+    /// [`write_jackdetect2`](crate::Codec::write_jackdetect2) and
+    /// [`modify_jackdetect2`](crate::Codec::modify_jackdetect2)
     pub struct JackDetect2(u16);
     impl Debug;
 
@@ -644,6 +697,10 @@ bitfield! {
 
 bitfield! {
     /// ADC Control register contents
+    ///
+    /// See [`read_adccontrol`](crate::Codec::read_adccontrol),
+    /// [`write_adccontrol`](crate::Codec::write_adccontrol) and
+    /// [`modify_adccontrol`](crate::Codec::modify_adccontrol)
     pub struct ADCControl(u16);
     impl Debug;
 
@@ -651,6 +708,10 @@ bitfield! {
 
 bitfield! {
     /// Left ADC Volume register contents
+    ///
+    /// See [`read_leftadcvolume`](crate::Codec::read_leftadcvolume),
+    /// [`write_leftadcvolume`](crate::Codec::write_leftadcvolume) and
+    /// [`modify_leftadcvolume`](crate::Codec::modify_leftadcvolume)
     pub struct LeftADCVolume(u16);
     impl Debug;
 
@@ -658,6 +719,10 @@ bitfield! {
 
 bitfield! {
     /// Right ADC Volume register contents
+    ///
+    /// See [`read_rightadcvolume`](crate::Codec::read_rightadcvolume),
+    /// [`write_rightadcvolume`](crate::Codec::write_rightadcvolume) and
+    /// [`modify_rightadcvolume`](crate::Codec::modify_rightadcvolume)
     pub struct RightADCVolume(u16);
     impl Debug;
 
@@ -665,6 +730,10 @@ bitfield! {
 
 bitfield! {
     /// EQ1-high cutoff register contents
+    ///
+    /// See [`read_eq1highcutoff`](crate::Codec::read_eq1highcutoff),
+    /// [`write_eq1highcutoff`](crate::Codec::write_eq1highcutoff) and
+    /// [`modify_eq1highcutoff`](crate::Codec::modify_eq1highcutoff)
     pub struct EQ1HighCutoff(u16);
     impl Debug;
 
@@ -672,6 +741,10 @@ bitfield! {
 
 bitfield! {
     /// EQ2-peak 1 register contents
+    ///
+    /// See [`read_eq2peak1`](crate::Codec::read_eq2peak1),
+    /// [`write_eq2peak1`](crate::Codec::write_eq2peak1) and
+    /// [`modify_eq2peak1`](crate::Codec::modify_eq2peak1)
     pub struct EQ2Peak1(u16);
     impl Debug;
 
@@ -679,6 +752,10 @@ bitfield! {
 
 bitfield! {
     /// EQ3-peak 2 register contents
+    ///
+    /// See [`read_eq3peak2`](crate::Codec::read_eq3peak2),
+    /// [`write_eq3peak2`](crate::Codec::write_eq3peak2) and
+    /// [`modify_eq3peak2`](crate::Codec::modify_eq3peak2)
     pub struct EQ3Peak2(u16);
     impl Debug;
 
@@ -686,6 +763,10 @@ bitfield! {
 
 bitfield! {
     /// EQ4-peak 3 register contents
+    ///
+    /// See [`read_eq4peak3`](crate::Codec::read_eq4peak3),
+    /// [`write_eq4peak3`](crate::Codec::write_eq4peak3) and
+    /// [`modify_eq4peak3`](crate::Codec::modify_eq4peak3)
     pub struct EQ4Peak3(u16);
     impl Debug;
 
@@ -693,6 +774,10 @@ bitfield! {
 
 bitfield! {
     /// EQ5-low cutoff register contents
+    ///
+    /// See [`read_eq5lowcutoff`](crate::Codec::read_eq5lowcutoff),
+    /// [`write_eq5lowcutoff`](crate::Codec::write_eq5lowcutoff) and
+    /// [`modify_eq5lowcutoff`](crate::Codec::modify_eq5lowcutoff)
     pub struct EQ5LowCutoff(u16);
     impl Debug;
 
@@ -700,6 +785,10 @@ bitfield! {
 
 bitfield! {
     /// DAC Limiter 1 register contents
+    ///
+    /// See [`read_daclimiter1`](crate::Codec::read_daclimiter1),
+    /// [`write_daclimiter1`](crate::Codec::write_daclimiter1) and
+    /// [`modify_daclimiter1`](crate::Codec::modify_daclimiter1)
     pub struct DACLimiter1(u16);
     impl Debug;
 
@@ -707,6 +796,10 @@ bitfield! {
 
 bitfield! {
     /// DAC Limiter 2 register contents
+    ///
+    /// See [`read_daclimiter2`](crate::Codec::read_daclimiter2),
+    /// [`write_daclimiter2`](crate::Codec::write_daclimiter2) and
+    /// [`modify_daclimiter2`](crate::Codec::modify_daclimiter2)
     pub struct DACLimiter2(u16);
     impl Debug;
 
@@ -714,6 +807,10 @@ bitfield! {
 
 bitfield! {
     /// Notch Filter 1 register contents
+    ///
+    /// See [`read_notchfilter1`](crate::Codec::read_notchfilter1),
+    /// [`write_notchfilter1`](crate::Codec::write_notchfilter1) and
+    /// [`modify_notchfilter1`](crate::Codec::modify_notchfilter1)
     pub struct NotchFilter1(u16);
     impl Debug;
 
@@ -721,6 +818,10 @@ bitfield! {
 
 bitfield! {
     /// Notch Filter 2 register contents
+    ///
+    /// See [`read_notchfilter2`](crate::Codec::read_notchfilter2),
+    /// [`write_notchfilter2`](crate::Codec::write_notchfilter2) and
+    /// [`modify_notchfilter2`](crate::Codec::modify_notchfilter2)
     pub struct NotchFilter2(u16);
     impl Debug;
 
@@ -728,6 +829,10 @@ bitfield! {
 
 bitfield! {
     /// Notch Filter 3 register contents
+    ///
+    /// See [`read_notchfilter3`](crate::Codec::read_notchfilter3),
+    /// [`write_notchfilter3`](crate::Codec::write_notchfilter3) and
+    /// [`modify_notchfilter3`](crate::Codec::modify_notchfilter3)
     pub struct NotchFilter3(u16);
     impl Debug;
 
@@ -735,6 +840,10 @@ bitfield! {
 
 bitfield! {
     /// Notch Filter 4 register contents
+    ///
+    /// See [`read_notchfilter4`](crate::Codec::read_notchfilter4),
+    /// [`write_notchfilter4`](crate::Codec::write_notchfilter4) and
+    /// [`modify_notchfilter4`](crate::Codec::modify_notchfilter4)
     pub struct NotchFilter4(u16);
     impl Debug;
 
@@ -742,6 +851,10 @@ bitfield! {
 
 bitfield! {
     /// ALC Control 1 register contents
+    ///
+    /// See [`read_alccontrol1`](crate::Codec::read_alccontrol1),
+    /// [`write_alccontrol1`](crate::Codec::write_alccontrol1) and
+    /// [`modify_alccontrol1`](crate::Codec::modify_alccontrol1)
     pub struct ALCControl1(u16);
     impl Debug;
 
@@ -749,6 +862,10 @@ bitfield! {
 
 bitfield! {
     /// ALC Control 2 register contents
+    ///
+    /// See [`read_alccontrol2`](crate::Codec::read_alccontrol2),
+    /// [`write_alccontrol2`](crate::Codec::write_alccontrol2) and
+    /// [`modify_alccontrol2`](crate::Codec::modify_alccontrol2)
     pub struct ALCControl2(u16);
     impl Debug;
 
@@ -756,6 +873,10 @@ bitfield! {
 
 bitfield! {
     /// ALC Control 3 register contents
+    ///
+    /// See [`read_alccontrol3`](crate::Codec::read_alccontrol3),
+    /// [`write_alccontrol3`](crate::Codec::write_alccontrol3) and
+    /// [`modify_alccontrol3`](crate::Codec::modify_alccontrol3)
     pub struct ALCControl3(u16);
     impl Debug;
 
@@ -763,6 +884,10 @@ bitfield! {
 
 bitfield! {
     /// Noise Gate register contents
+    ///
+    /// See [`read_noisegate`](crate::Codec::read_noisegate),
+    /// [`write_noisegate`](crate::Codec::write_noisegate) and
+    /// [`modify_noisegate`](crate::Codec::modify_noisegate)
     pub struct NoiseGate(u16);
     impl Debug;
 
@@ -770,6 +895,10 @@ bitfield! {
 
 bitfield! {
     /// PLL N register contents
+    ///
+    /// See [`read_plln`](crate::Codec::read_plln),
+    /// [`write_plln`](crate::Codec::write_plln) and
+    /// [`modify_plln`](crate::Codec::modify_plln)
     pub struct PllN(u16);
     impl Debug;
 
@@ -777,6 +906,10 @@ bitfield! {
 
 bitfield! {
     /// PLL K 1 register contents
+    ///
+    /// See [`read_pllk1`](crate::Codec::read_pllk1),
+    /// [`write_pllk1`](crate::Codec::write_pllk1) and
+    /// [`modify_pllk1`](crate::Codec::modify_pllk1)
     pub struct PllK1(u16);
     impl Debug;
 
@@ -784,6 +917,10 @@ bitfield! {
 
 bitfield! {
     /// PLL K 2 register contents
+    ///
+    /// See [`read_pllk2`](crate::Codec::read_pllk2),
+    /// [`write_pllk2`](crate::Codec::write_pllk2) and
+    /// [`modify_pllk2`](crate::Codec::modify_pllk2)
     pub struct PllK2(u16);
     impl Debug;
 
@@ -791,6 +928,10 @@ bitfield! {
 
 bitfield! {
     /// PLL K 3 register contents
+    ///
+    /// See [`read_pllk3`](crate::Codec::read_pllk3),
+    /// [`write_pllk3`](crate::Codec::write_pllk3) and
+    /// [`modify_pllk3`](crate::Codec::modify_pllk3)
     pub struct PllK3(u16);
     impl Debug;
 
@@ -798,6 +939,10 @@ bitfield! {
 
 bitfield! {
     /// 3D control register contents
+    ///
+    /// See [`read_threedcontrol`](crate::Codec::read_threedcontrol),
+    /// [`write_threedcontrol`](crate::Codec::write_threedcontrol) and
+    /// [`modify_threedcontrol`](crate::Codec::modify_threedcontrol)
     pub struct ThreeDControl(u16);
     impl Debug;
 
@@ -805,6 +950,10 @@ bitfield! {
 
 bitfield! {
     /// Right Speaker Submix register contents
+    ///
+    /// See [`read_rightspeakersubmix`](crate::Codec::read_rightspeakersubmix),
+    /// [`write_rightspeakersubmix`](crate::Codec::write_rightspeakersubmix) and
+    /// [`modify_rightspeakersubmix`](crate::Codec::modify_rightspeakersubmix)
     pub struct RightSpeakerSubmix(u16);
     impl Debug;
 
@@ -812,6 +961,10 @@ bitfield! {
 
 bitfield! {
     /// Input Control register contents
+    ///
+    /// See [`read_inputcontrol`](crate::Codec::read_inputcontrol),
+    /// [`write_inputcontrol`](crate::Codec::write_inputcontrol) and
+    /// [`modify_inputcontrol`](crate::Codec::modify_inputcontrol)
     pub struct InputControl(u16);
     impl Debug;
 
@@ -819,6 +972,10 @@ bitfield! {
 
 bitfield! {
     /// Left Input PGA Gain register contents
+    ///
+    /// See [`read_leftinputpgagain`](crate::Codec::read_leftinputpgagain),
+    /// [`write_leftinputpgagain`](crate::Codec::write_leftinputpgagain) and
+    /// [`modify_leftinputpgagain`](crate::Codec::modify_leftinputpgagain)
     pub struct LeftInputPGAGain(u16);
     impl Debug;
 
@@ -826,6 +983,10 @@ bitfield! {
 
 bitfield! {
     /// Right Input PGA Gain register contents
+    ///
+    /// See [`read_rightinputpgagain`](crate::Codec::read_rightinputpgagain),
+    /// [`write_rightinputpgagain`](crate::Codec::write_rightinputpgagain) and
+    /// [`modify_rightinputpgagain`](crate::Codec::modify_rightinputpgagain)
     pub struct RightInputPGAGain(u16);
     impl Debug;
 
@@ -833,6 +994,10 @@ bitfield! {
 
 bitfield! {
     /// Left ADC Boost register contents
+    ///
+    /// See [`read_leftadcboost`](crate::Codec::read_leftadcboost),
+    /// [`write_leftadcboost`](crate::Codec::write_leftadcboost) and
+    /// [`modify_leftadcboost`](crate::Codec::modify_leftadcboost)
     pub struct LeftADCBoost(u16);
     impl Debug;
 
@@ -840,6 +1005,10 @@ bitfield! {
 
 bitfield! {
     /// Right ADC Boost register contents
+    ///
+    /// See [`read_rightadcboost`](crate::Codec::read_rightadcboost),
+    /// [`write_rightadcboost`](crate::Codec::write_rightadcboost) and
+    /// [`modify_rightadcboost`](crate::Codec::modify_rightadcboost)
     pub struct RightADCBoost(u16);
     impl Debug;
 
@@ -847,6 +1016,10 @@ bitfield! {
 
 bitfield! {
     /// Output Control register contents
+    ///
+    /// See [`read_outputcontrol`](crate::Codec::read_outputcontrol),
+    /// [`write_outputcontrol`](crate::Codec::write_outputcontrol) and
+    /// [`modify_outputcontrol`](crate::Codec::modify_outputcontrol)
     pub struct OutputControl(u16);
     impl Debug;
 
@@ -854,6 +1027,10 @@ bitfield! {
 
 bitfield! {
     /// Left Mixer register contents
+    ///
+    /// See [`read_leftmixer`](crate::Codec::read_leftmixer),
+    /// [`write_leftmixer`](crate::Codec::write_leftmixer) and
+    /// [`modify_leftmixer`](crate::Codec::modify_leftmixer)
     pub struct LeftMixer(u16);
     impl Debug;
 
@@ -861,6 +1038,10 @@ bitfield! {
 
 bitfield! {
     /// Right Mixer register contents
+    ///
+    /// See [`read_rightmixer`](crate::Codec::read_rightmixer),
+    /// [`write_rightmixer`](crate::Codec::write_rightmixer) and
+    /// [`modify_rightmixer`](crate::Codec::modify_rightmixer)
     pub struct RightMixer(u16);
     impl Debug;
 
@@ -868,6 +1049,10 @@ bitfield! {
 
 bitfield! {
     /// LHP Volume register contents
+    ///
+    /// See [`read_lhpvolume`](crate::Codec::read_lhpvolume),
+    /// [`write_lhpvolume`](crate::Codec::write_lhpvolume) and
+    /// [`modify_lhpvolume`](crate::Codec::modify_lhpvolume)
     pub struct LHPVolume(u16);
     impl Debug;
 
@@ -875,6 +1060,10 @@ bitfield! {
 
 bitfield! {
     /// RHP Volume register contents
+    ///
+    /// See [`read_rhpvolume`](crate::Codec::read_rhpvolume),
+    /// [`write_rhpvolume`](crate::Codec::write_rhpvolume) and
+    /// [`modify_rhpvolume`](crate::Codec::modify_rhpvolume)
     pub struct RHPVolume(u16);
     impl Debug;
 
@@ -882,6 +1071,10 @@ bitfield! {
 
 bitfield! {
     /// LSPKOUT Volume register contents
+    ///
+    /// See [`read_lspkoutvolume`](crate::Codec::read_lspkoutvolume),
+    /// [`write_lspkoutvolume`](crate::Codec::write_lspkoutvolume) and
+    /// [`modify_lspkoutvolume`](crate::Codec::modify_lspkoutvolume)
     pub struct LSPKOUTVolume(u16);
     impl Debug;
 
@@ -889,6 +1082,10 @@ bitfield! {
 
 bitfield! {
     /// RSPKOUT Volume register contents
+    ///
+    /// See [`read_rspkoutvolume`](crate::Codec::read_rspkoutvolume),
+    /// [`write_rspkoutvolume`](crate::Codec::write_rspkoutvolume) and
+    /// [`modify_rspkoutvolume`](crate::Codec::modify_rspkoutvolume)
     pub struct RSPKOUTVolume(u16);
     impl Debug;
 
@@ -896,6 +1093,10 @@ bitfield! {
 
 bitfield! {
     /// AUX2 Mixer register contents
+    ///
+    /// See [`read_aux2mixer`](crate::Codec::read_aux2mixer),
+    /// [`write_aux2mixer`](crate::Codec::write_aux2mixer) and
+    /// [`modify_aux2mixer`](crate::Codec::modify_aux2mixer)
     pub struct AUX2Mixer(u16);
     impl Debug;
 
@@ -903,6 +1104,10 @@ bitfield! {
 
 bitfield! {
     /// AUX1 Mixer register contents
+    ///
+    /// See [`read_aux1mixer`](crate::Codec::read_aux1mixer),
+    /// [`write_aux1mixer`](crate::Codec::write_aux1mixer) and
+    /// [`modify_aux1mixer`](crate::Codec::modify_aux1mixer)
     pub struct AUX1Mixer(u16);
     impl Debug;
 
@@ -910,6 +1115,10 @@ bitfield! {
 
 bitfield! {
     /// Power Management register contents
+    ///
+    /// See [`read_powermanagement`](crate::Codec::read_powermanagement),
+    /// [`write_powermanagement`](crate::Codec::write_powermanagement) and
+    /// [`modify_powermanagement`](crate::Codec::modify_powermanagement)
     pub struct PowerManagement(u16);
     impl Debug;
 
@@ -917,6 +1126,10 @@ bitfield! {
 
 bitfield! {
     /// Left Time Slot register contents
+    ///
+    /// See [`read_lefttimeslot`](crate::Codec::read_lefttimeslot),
+    /// [`write_lefttimeslot`](crate::Codec::write_lefttimeslot) and
+    /// [`modify_lefttimeslot`](crate::Codec::modify_lefttimeslot)
     pub struct LeftTimeSlot(u16);
     impl Debug;
 
@@ -924,6 +1137,10 @@ bitfield! {
 
 bitfield! {
     /// Misc register contents
+    ///
+    /// See [`read_misc`](crate::Codec::read_misc),
+    /// [`write_misc`](crate::Codec::write_misc) and
+    /// [`modify_misc`](crate::Codec::modify_misc)
     pub struct Misc(u16);
     impl Debug;
 
@@ -931,6 +1148,10 @@ bitfield! {
 
 bitfield! {
     /// Right Time Slot register contents
+    ///
+    /// See [`read_righttimeslot`](crate::Codec::read_righttimeslot),
+    /// [`write_righttimeslot`](crate::Codec::write_righttimeslot) and
+    /// [`modify_righttimeslot`](crate::Codec::modify_righttimeslot)
     pub struct RightTimeSlot(u16);
     impl Debug;
 
