@@ -1420,6 +1420,27 @@ where
         self.write_deviceid(new_value)
     }
 
+    /// Read the *DAC Dither register* contents
+    pub fn read_dacdither(&mut self) -> Result<registers::DacDither, Error<I::Error>> {
+        let value = self.read_register(Register::DacDither)?;
+        Ok(registers::DacDither(value))
+    }
+
+    /// Write the *DAC Dither register* contents
+    pub fn write_dacdither(&mut self, value: registers::DacDither) -> Result<(), Error<I::Error>> {
+        self.write_register(Register::DacDither, value.0)
+    }
+
+    /// Modify the *DAC Dither register* contents
+    pub fn modify_dacdither<F>(&mut self, f: F) -> Result<(), Error<I::Error>>
+    where
+        F: FnOnce(registers::DacDither) -> registers::DacDither,
+    {
+        let value = self.read_dacdither()?;
+        let new_value = f(value);
+        self.write_dacdither(new_value)
+    }
+
     /// Read the *ALC Enhancements 1 register* contents
     pub fn read_alcenhancements1(
         &mut self,

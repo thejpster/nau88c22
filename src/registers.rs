@@ -129,6 +129,8 @@ pub enum Register {
     DeviceRevisionNo = 0x3E,
     /// Device ID
     DeviceId = 0x3F,
+    /// DAC Dither
+    DacDither = 0x41,
     /// ALC Enhancements 1
     AlcEnhancements1 = 0x46,
     /// ALC Enhancements 2
@@ -1187,6 +1189,27 @@ bitfield! {
     pub device_id, _: 8, 0;
 }
 
+bitfield! {
+    /// DAC Dither
+    ///
+    /// See [`read_dacdither`](crate::Codec::read_dacdither),
+    /// [`write_dacdither`](crate::Codec::write_dacdither) and
+    /// [`modify_dacdither`](crate::Codec::modify_dacdither)
+    pub struct DacDither(u16);
+    impl Debug;
+    u8;
+    /// Dither added to DAC modulator to eliminate all non-random noise
+    ///
+    /// * `0b00000` = dither off
+    /// * `0b10001` = nominal optimal dither
+    /// * `0b11111` = maximum dither
+    pub mod_dither, set_mod_dither: 8, 4;
+    /// Dither added to DAC analog output to eliminate all non-random noise
+    ///
+    /// * `0b0000` = dither off
+    /// * `0b0100` = nominal optimal dither
+    /// * `0b1111` = maximum dither
+    pub analog_dither, set_analog_dither: 3, 0;
 }
 
 bitfield! {
