@@ -12,3 +12,7 @@ edition = "2021"
 [dependencies]
 embedded-hal = "1.0.0-rc.1"
 bitfield = "0.14"
+defmt = { version = "0.3.5", optional = true }
+
+[features]
+defmt = ["dep:defmt"]

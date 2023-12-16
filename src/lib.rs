@@ -34,6 +34,7 @@ pub struct Codec<I> {
 
 /// Represents the ways that this library can fail
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Error<E> {
     /// An I2C Error occurred
     I2c(E),
@@ -73,6 +74,8 @@ where
     /// Read the Device ID register as a check we actually have a CODEC
     pub fn check_device_id(&mut self) -> Result<(), Error<I::Error>> {
         let device_id = self.read_register(Register::DeviceId)?;
+        #[cfg(feature = "defmt")]
+        defmt::info!("Device ID = 0x{:03x}", device_id);
         if device_id == Self::DEVICE_ID {
             Ok(())
         } else {
@@ -1681,7 +1684,7 @@ where
     pub fn read_register(&mut self, register: Register) -> Result<u16, Error<I::Error>> {
         let mut buffer = [0u8; 2];
         self.interface
-            .write_read(Self::DEVICE_ADDR, &[register as u8], &mut buffer)?;
+            .write_read(Self::DEVICE_ADDR, &[(register as u8) * 2], &mut buffer)?;
         let mut result = ((buffer[0] as u16) & 1) << 8;
         result |= buffer[1] as u16;
         Ok(result)
@@ -1703,7 +1706,7 @@ where
         register: Register,
         value: u16,
     ) -> Result<(), Error<I::Error>> {
-        let buffer = [register as u8, (value >> 8) as u8, value as u8];
+        let buffer = [((register as u8) * 2) | (value >> 8) as u8, value as u8];
         self.interface.write(Self::DEVICE_ADDR, &buffer)?;
         Ok(())
     }
