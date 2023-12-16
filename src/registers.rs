@@ -11,6 +11,7 @@ use bitfield::bitfield;
 /// The list of registers on the chip
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[repr(u8)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Register {
     /// Software Reset
     SoftwareReset = 0x00,
@@ -149,6 +150,83 @@ pub enum Register {
     ControlAndStatus = 0x4E,
     /// Output tie-off control
     OutputTieOffControl = 0x4F,
+}
+
+impl Register {
+    /// Get a static slice of all the readable registers
+    pub fn readable() -> &'static [Register] {
+        static REGISTERS: [Register; 67] = [
+            Register::PowerManagement1,
+            Register::PowerManagement2,
+            Register::PowerManagement3,
+            Register::AudioInterface,
+            Register::Companding,
+            Register::ClockControl1,
+            Register::ClockControl2,
+            Register::GPIO,
+            Register::JackDetect1,
+            Register::DACControl,
+            Register::LeftDACVolume,
+            Register::RightDACVolume,
+            Register::JackDetect2,
+            Register::ADCControl,
+            Register::LeftADCVolume,
+            Register::RightADCVolume,
+            Register::EQ1HighCutoff,
+            Register::EQ2Peak1,
+            Register::EQ3Peak2,
+            Register::EQ4Peak3,
+            Register::EQ5LowCutoff,
+            Register::DACLimiter1,
+            Register::DACLimiter2,
+            Register::NotchFilter1,
+            Register::NotchFilter2,
+            Register::NotchFilter3,
+            Register::NotchFilter4,
+            Register::ALCControl1,
+            Register::ALCControl2,
+            Register::ALCControl3,
+            Register::NoiseGate,
+            Register::PllN,
+            Register::PllK1,
+            Register::PllK2,
+            Register::PllK3,
+            Register::ThreeDControl,
+            Register::RightSpeakerSubmix,
+            Register::InputControl,
+            Register::LeftInputPGAGain,
+            Register::RightInputPGAGain,
+            Register::LeftADCBoost,
+            Register::RightADCBoost,
+            Register::OutputControl,
+            Register::LeftMixer,
+            Register::RightMixer,
+            Register::LHPVolume,
+            Register::RHPVolume,
+            Register::LSPKOUTVolume,
+            Register::RSPKOUTVolume,
+            Register::AUX2Mixer,
+            Register::AUX1Mixer,
+            Register::PowerManagement,
+            Register::LeftTimeSlot,
+            Register::Misc,
+            Register::RightTimeSlot,
+            Register::DeviceRevisionNo,
+            Register::DeviceId,
+            Register::DacDither,
+            Register::AlcEnhancements1,
+            Register::AlcEnhancements2,
+            Register::MiscControls,
+            Register::TieOffOverrides,
+            Register::PowerTieOffCtrl,
+            Register::P2PDetectorRead,
+            Register::PeakDetectorRead,
+            Register::ControlAndStatus,
+            Register::OutputTieOffControl,
+        ];
+
+        &REGISTERS
+    }
 }
 
 bitfield! {
