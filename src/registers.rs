@@ -1,6 +1,6 @@
 //! Register constants for the NAU88C22
 //!
-//! See <https://www.nuvoton.com/export/resource-files/NAU8822DataSheetRev3.3.pdf>
+//! See <https://www.nuvoton.com/export/resource-files/en-us--DS_NAU88C22_DataSheet_EN_Rev1.8.pdf>
 
 // SPDX-FileCopyrightText: 2023 Jonathan 'theJPster' Pallant <github@thejpster.org.uk>
 //
