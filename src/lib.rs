@@ -1,6 +1,71 @@
 //! A driver for the register interface on the Nuvoton NAU88C22 CODEC
 //!
 //! Works in I²C mode only, for now.
+//!
+//! ```rust,no_run
+//! # use embedded_hal::i2c::{self as hali2c, SevenBitAddress, I2c, Operation, ErrorKind};
+//! # pub struct I2c0;
+//! # #[derive(Debug, Copy, Clone, Eq, PartialEq)]
+//! # pub enum Error { }
+//! # impl hali2c::Error for Error {
+//! #     fn kind(&self) -> hali2c::ErrorKind {
+//! #         ErrorKind::Other
+//! #     }
+//! # }
+//! # impl hali2c::ErrorType for I2c0 {
+//! #     type Error = Error;
+//! # }
+//! # impl I2c<SevenBitAddress> for I2c0 {
+//! #     fn transaction(&mut self, address: u8, operations: &mut [Operation<'_>]) -> Result<(), Self::Error> {
+//! #       Ok(())
+//! #     }
+//! # }
+//! # struct Uart0;
+//! # impl core::fmt::Write for Uart0 {
+//! #   fn write_str(&mut self, _string: &str) -> core::fmt::Result { Ok(()) }
+//! # }
+//! # struct Hal;
+//! # impl Hal {
+//! #   fn i2c(&self) -> I2c0 {
+//! #     I2c0
+//! #   }
+//! #   fn uart(&self) -> Uart0 {
+//! #     Uart0
+//! #   }
+//! #   fn delay_ms(&self, _ms: u32) {}
+//! # }
+//! # fn main() -> Result<(), nau88c22::Error<Error>> {
+//! # let hal = Hal;
+//! use core::fmt::Write;
+//! let mut uart = hal.uart();
+//! let i2c = hal.i2c();
+//! let mut codec = nau88c22::Codec::new(i2c);
+//! // Do a Software Reset on the chip to put registers into a known state. This
+//! // fails if we don't get an I2C ACK:
+//! codec.reset()?;
+//! // You can then either poll a register for a known value, or just wait for
+//! // the reset sequence to complete:
+//! hal.delay_ms(100);
+//! // First you should check the Device ID is correct:
+//! codec.check_device_id()?;
+//! // Every register has a `read_xxx()` method:
+//! let pm1 = codec.read_powermanagement1()?;
+//! // You can view the fields with a debug print:
+//! writeln!(uart, "powermanagement1 = {:?}", pm1).unwrap();
+//! // Or access them individually:
+//! writeln!(uart, "powermanagement1.dcbufen = {}", pm1.dcbufen()).unwrap();
+//! // You can also modify registers with a closure:
+//! codec.modify_powermanagement1(|mut w| {
+//!     // the closure is given a proxy object, usually called `w`
+//!     // use it to turn the fields on or off
+//!     w.iobufen_set(true);
+//!     w.dcbufen_set(true);
+//!     // you must return the proxy object from the closure
+//!     w
+//! })?;
+//! # Ok(())
+//! # }
+//! ```
 
 // SPDX-FileCopyrightText: 2023 Jonathan 'theJPster' Pallant <github@thejpster.org.uk>
 //
@@ -29,7 +94,6 @@ pub use registers::Register;
 #[derive(Debug, Clone)]
 pub struct Codec<I> {
     interface: I,
-    external_freq: Option<u32>,
 }
 
 /// Represents the ways that this library can fail
@@ -61,14 +125,8 @@ where
     ///
     /// Holds on to the given I²C interface so it can perform I²C transactions
     /// whenever its methods are called.
-    ///
-    /// Pass it the external frequency provided on the MCLK pin, if any. This
-    /// will be used in PLL calculations.
-    pub const fn new(interface: I, external_freq: Option<u32>) -> Codec<I> {
-        Codec {
-            interface,
-            external_freq,
-        }
+    pub const fn new(interface: I) -> Codec<I> {
+        Codec { interface }
     }
 
     /// Read the Device ID register as a check we actually have a CODEC
