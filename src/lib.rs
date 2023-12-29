@@ -29,7 +29,6 @@ pub use registers::Register;
 #[derive(Debug, Clone)]
 pub struct Codec<I> {
     interface: I,
-    external_freq: Option<u32>,
 }
 
 /// Represents the ways that this library can fail
@@ -61,14 +60,8 @@ where
     ///
     /// Holds on to the given I²C interface so it can perform I²C transactions
     /// whenever its methods are called.
-    ///
-    /// Pass it the external frequency provided on the MCLK pin, if any. This
-    /// will be used in PLL calculations.
-    pub const fn new(interface: I, external_freq: Option<u32>) -> Codec<I> {
-        Codec {
-            interface,
-            external_freq,
-        }
+    pub const fn new(interface: I) -> Codec<I> {
+        Codec { interface }
     }
 
     /// Read the Device ID register as a check we actually have a CODEC
