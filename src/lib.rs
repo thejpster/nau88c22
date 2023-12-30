@@ -81,6 +81,220 @@ use embedded_hal::i2c::{I2c, SevenBitAddress};
 #[doc(inline)]
 pub use registers::Register;
 
+/// The allowed values for MCLK scaling
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
+#[repr(u8)]
+pub enum MclkScaleFactor {
+    /// Divide MCLK by 1
+    DivideBy1 = 0,
+    /// Divide MCLK by 1.5
+    DivideBy1p5 = 1,
+    /// Divide MCLK by 2
+    DivideBy2 = 2,
+    /// Divide MCLK by 3
+    DivideBy3 = 3,
+    /// Divide MCLK by 4
+    DivideBy4 = 4,
+    /// Divide MCLK by 6
+    DivideBy6 = 5,
+    /// Divide MCLK by 8
+    DivideBy8 = 6,
+    /// Divide MCLK by 12
+    DivideBy12 = 7,
+}
+
+impl MclkScaleFactor {
+    const ALL: [MclkScaleFactor; 8] = [
+        MclkScaleFactor::DivideBy1,
+        MclkScaleFactor::DivideBy1p5,
+        MclkScaleFactor::DivideBy2,
+        MclkScaleFactor::DivideBy3,
+        MclkScaleFactor::DivideBy4,
+        MclkScaleFactor::DivideBy6,
+        MclkScaleFactor::DivideBy8,
+        MclkScaleFactor::DivideBy12,
+    ];
+}
+
+/// Represents a PLL configuration
+///
+/// The PLL takes an input clock frequency and:
+///
+/// * optionally halves it (`prescale_div_2x`),
+/// * scales it by a non-integer scale factor (comprised of `integer_portion_n`
+///   and `fractional_portion_k`),
+/// * to produce frequency `f2` which is between 90 MHz and 100 MHz,
+/// * which it then divides down by `mclk_scale_factor * 4` to produce the
+///   desired internal IMCLK (`256 * Fs``)
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
+pub struct PllParams {
+    /// If `true`, the input clock is divided by two. Otherwise, one.
+    ///
+    /// This is `D` in the datasheet.
+    pub prescale_div_2x: bool,
+    /// The integer portion of the scaling factor.
+    ///
+    /// Must be in the range `6..=12`.
+    pub integer_portion_n: u8,
+    /// The fractional portion of the scaling factor.
+    ///
+    /// Must be in the range `0..=0xFF_FFF`.
+    pub fractional_portion_k: u32,
+    /// The value for the MCLKSEL field.
+    ///
+    /// Controls how IMCLK is divided down to get MCLK. There is an additional
+    /// division of `4x` applied as well.
+    pub mclk_scale_factor: MclkScaleFactor,
+}
+
+/// PLL Settings for 12 MHz input clock and 44.1 KHz sample rate
+pub const PLL_PARAM_12M_44K1: PllParams = PllParams {
+    prescale_div_2x: false,
+    mclk_scale_factor: MclkScaleFactor::DivideBy2,
+    integer_portion_n: 7,
+    fractional_portion_k: 0x86C226,
+};
+
+/// PLL Settings for 12 MHz input clock and 48KHz sample rate
+pub const PLL_PARAM_12M_48K: PllParams = PllParams {
+    prescale_div_2x: false,
+    mclk_scale_factor: MclkScaleFactor::DivideBy2,
+    integer_portion_n: 8,
+    fractional_portion_k: 0x3126E9,
+};
+
+/// PLL Settings for 14.4 MHz input clock and 44.1 KHz sample rate
+pub const PLL_PARAM_14M4_44K1: PllParams = PllParams {
+    prescale_div_2x: false,
+    mclk_scale_factor: MclkScaleFactor::DivideBy2,
+    integer_portion_n: 6,
+    fractional_portion_k: 0x45A1CA,
+};
+
+/// PLL Settings for 14.4 MHz input clock and 48KHz sample rate
+pub const PLL_PARAM_14M4_48K: PllParams = PllParams {
+    prescale_div_2x: false,
+    mclk_scale_factor: MclkScaleFactor::DivideBy2,
+    integer_portion_n: 6,
+    fractional_portion_k: 0xD3A06D,
+};
+
+/// PLL Settings for 19.2 MHz input clock and 44.1 KHz sample rate
+pub const PLL_PARAM_19M2_44K1: PllParams = PllParams {
+    prescale_div_2x: true,
+    mclk_scale_factor: MclkScaleFactor::DivideBy2,
+    integer_portion_n: 9,
+    fractional_portion_k: 0x6872B0,
+};
+
+/// PLL Settings for 19.2 MHz input clock and 48KHz sample rate
+pub const PLL_PARAM_19M2_48K: PllParams = PllParams {
+    prescale_div_2x: true,
+    mclk_scale_factor: MclkScaleFactor::DivideBy2,
+    integer_portion_n: 10,
+    fractional_portion_k: 0x3D70A3,
+};
+
+/// PLL Settings for 19.8 MHz input clock and 44.1 KHz sample rate
+pub const PLL_PARAM_19M8_44K1: PllParams = PllParams {
+    prescale_div_2x: true,
+    mclk_scale_factor: MclkScaleFactor::DivideBy2,
+    integer_portion_n: 9,
+    fractional_portion_k: 0x1F76F8,
+};
+
+/// PLL Settings for 19.8 MHz input clock and 48KHz sample rate
+pub const PLL_PARAM_19M8_48K: PllParams = PllParams {
+    prescale_div_2x: true,
+    mclk_scale_factor: MclkScaleFactor::DivideBy2,
+    integer_portion_n: 9,
+    fractional_portion_k: 0xEE009E,
+};
+
+/// PLL Settings for 24 MHz input clock and 44.1 KHz sample rate
+pub const PLL_PARAM_24M_44K1: PllParams = PllParams {
+    prescale_div_2x: true,
+    mclk_scale_factor: MclkScaleFactor::DivideBy2,
+    integer_portion_n: 7,
+    fractional_portion_k: 0x86C226,
+};
+
+/// PLL Settings for 24 MHz input clock and 48KHz sample rate
+pub const PLL_PARAM_24M_48K: PllParams = PllParams {
+    prescale_div_2x: true,
+    mclk_scale_factor: MclkScaleFactor::DivideBy2,
+    integer_portion_n: 8,
+    fractional_portion_k: 0x3126E9,
+};
+
+/// PLL Settings for 26 MHz input clock and 44.1 KHz sample rate
+pub const PLL_PARAM_26M_44K1: PllParams = PllParams {
+    prescale_div_2x: true,
+    mclk_scale_factor: MclkScaleFactor::DivideBy2,
+    integer_portion_n: 6,
+    fractional_portion_k: 0xF28BD4,
+};
+
+/// PLL Settings for 26 MHz input clock and 48KHz sample rate
+pub const PLL_PARAM_26M_48K: PllParams = PllParams {
+    prescale_div_2x: true,
+    mclk_scale_factor: MclkScaleFactor::DivideBy2,
+    integer_portion_n: 7,
+    fractional_portion_k: 0x8FD526,
+};
+
+impl PllParams {
+    /// Calculate PLL parameters
+    ///
+    /// For a given input clock frequency and desired sample rate, this function
+    /// will attempt to find some PLL parameters which produce the desired IMCLK
+    /// (which is `desired_sample_rate_hz * 256`).
+    ///
+    /// The IMCLK value will be some integer division of the PLL output
+    /// frequency `f2`, and `f2` will be between 90  MHz input clock and 100 MHz.
+    pub fn calculate(input_clock_hz: u32, desired_sample_rate_hz: u32) -> Option<PllParams> {
+        const VALID_F2_RANGE: core::ops::RangeInclusive<u32> = 90_000_000..=100_000_000;
+        const VALID_RATIO_RANGE: core::ops::RangeInclusive<u64> = 0x600_0000..=0xC00_0000;
+        const FRACTION_SCALE: u64 = 1 << 24;
+        const FRACTION_MASK: u64 = FRACTION_SCALE - 1;
+        let imclk = desired_sample_rate_hz * 256;
+        'mclk_loop: for mclk_scale_factor in MclkScaleFactor::ALL.iter().copied() {
+            let f2 = match mclk_scale_factor {
+                MclkScaleFactor::DivideBy1 => imclk * 4,
+                MclkScaleFactor::DivideBy1p5 => (imclk * 4 * 3) / 2,
+                MclkScaleFactor::DivideBy2 => imclk * 4 * 2,
+                MclkScaleFactor::DivideBy3 => imclk * 4 * 3,
+                MclkScaleFactor::DivideBy4 => imclk * 4 * 4,
+                MclkScaleFactor::DivideBy6 => imclk * 4 * 6,
+                MclkScaleFactor::DivideBy8 => imclk * 4 * 8,
+                MclkScaleFactor::DivideBy12 => imclk * 4 * 12,
+            };
+            if !VALID_F2_RANGE.contains(&f2) {
+                // f2 is out of range
+                continue 'mclk_loop;
+            }
+            'd_loop: for d in 1..=2 {
+                let f1 = input_clock_hz / d;
+                let ratio = (u64::from(f2) * FRACTION_SCALE) / u64::from(f1);
+                if !VALID_RATIO_RANGE.contains(&ratio) {
+                    continue 'd_loop;
+                }
+                let integer_portion_n = (ratio / FRACTION_SCALE) as u8;
+                let fractional_portion_k = (ratio & FRACTION_MASK) as u32;
+                return Some(PllParams {
+                    prescale_div_2x: d == 2,
+                    mclk_scale_factor,
+                    integer_portion_n,
+                    fractional_portion_k,
+                });
+            }
+        }
+        None
+    }
+}
+
 /// Represents the NAU882CC CODEC
 ///
 /// All methods change the CODEC settings in real-time.
@@ -129,12 +343,14 @@ where
         Codec { interface }
     }
 
-    /// Read the Device ID register as a check we actually have a CODEC
+    /// Read the Device ID register and compare against the expected value.
+    ///
+    /// This acts as a check we actually have a CODEC on the bus.
     pub fn check_device_id(&mut self) -> Result<(), Error<I::Error>> {
-        let device_id = self.read_register(Register::DeviceId)?;
+        let device_id = self.read_deviceid()?;
         #[cfg(feature = "defmt")]
-        defmt::info!("Device ID = 0x{:03x}", device_id);
-        if device_id == Self::DEVICE_ID {
+        defmt::info!("Device ID = 0x{:03x}", device_id.device_id());
+        if device_id.device_id() == Self::DEVICE_ID {
             Ok(())
         } else {
             Err(Error::WrongDeviceId)
@@ -143,8 +359,43 @@ where
 
     /// Reset the chip
     pub fn reset(&mut self) -> Result<(), Error<I::Error>> {
-        // write anything to this register to reset it
+        // write anything to this register to reset the chip
         self.write_register(Register::SoftwareReset, 0x1FF)
+    }
+
+    /// Loads the PLL configuration from the given params.
+    ///
+    /// Does not switch the CODEC to run from the PLL - you must do that
+    /// manually.
+    ///
+    /// You should also ensure you are not running from the PLL when you try and
+    /// reconfigure it.
+    pub fn load_pll_config(&mut self, params: &PllParams) -> Result<(), Error<I::Error>> {
+        self.modify_clockcontrol1(|mut w| {
+            w.mclksel_set(params.mclk_scale_factor as u8);
+            w
+        })?;
+        self.modify_plln(|mut w| {
+            w.pllmclk_set(params.prescale_div_2x);
+            w.plln_set(params.integer_portion_n);
+            w
+        })?;
+        let k1 = ((params.fractional_portion_k >> 18) & 0x3F) as u8;
+        self.modify_pllk1(|mut w| {
+            w.pllkhigh_set(k1);
+            w
+        })?;
+        let k2 = ((params.fractional_portion_k >> 9) & 0x1FF) as u16;
+        self.modify_pllk2(|mut w| {
+            w.pllkmedium_set(k2);
+            w
+        })?;
+        let k3 = (params.fractional_portion_k & 0x1FF) as u16;
+        self.modify_pllk3(|mut w| {
+            w.pllklow_set(k3);
+            w
+        })?;
+        Ok(())
     }
 
     /// Read the *Power Management 1 register* contents
@@ -1790,6 +2041,83 @@ where
         let value = self.read_register(register)?;
         let new_value = f(value);
         self.write_register(register, new_value)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn pll_params1() {
+        let res = PllParams::calculate(12_000_000, 44_100);
+        assert_eq!(res, Some(PLL_PARAM_12M_44K1));
+    }
+
+    #[test]
+    fn pll_params2() {
+        let res = PllParams::calculate(12_000_000, 48_000);
+        assert_eq!(res, Some(PLL_PARAM_12M_48K));
+    }
+
+    #[test]
+    fn pll_params3() {
+        let res = PllParams::calculate(14_400_000, 44_100);
+        assert_eq!(res, Some(PLL_PARAM_14M4_44K1));
+    }
+
+    #[test]
+    fn pll_params4() {
+        let res = PllParams::calculate(14_400_000, 48_000);
+        assert_eq!(res, Some(PLL_PARAM_14M4_48K));
+    }
+
+    #[test]
+    fn pll_params5() {
+        let res = PllParams::calculate(19_200_000, 44_100);
+        assert_eq!(res, Some(PLL_PARAM_19M2_44K1));
+    }
+
+    #[test]
+    fn pll_params6() {
+        let res = PllParams::calculate(19_200_000, 48000);
+        assert_eq!(res, Some(PLL_PARAM_19M2_48K));
+    }
+
+    #[test]
+    fn pll_params7() {
+        let res = PllParams::calculate(19_800_000, 44_100);
+        assert_eq!(res, Some(PLL_PARAM_19M8_44K1));
+    }
+
+    #[test]
+    fn pll_params8() {
+        let res = PllParams::calculate(19_800_000, 48000);
+        assert_eq!(res, Some(PLL_PARAM_19M8_48K));
+    }
+
+    #[test]
+    fn pll_params9() {
+        let res = PllParams::calculate(24_000_000, 44_100);
+        assert_eq!(res, Some(PLL_PARAM_24M_44K1));
+    }
+
+    #[test]
+    fn pll_params10() {
+        let res = PllParams::calculate(24_000_000, 48000);
+        assert_eq!(res, Some(PLL_PARAM_24M_48K));
+    }
+
+    #[test]
+    fn pll_params11() {
+        let res = PllParams::calculate(26_000_000, 44_100);
+        assert_eq!(res, Some(PLL_PARAM_26M_44K1));
+    }
+
+    #[test]
+    fn pll_params12() {
+        let res = PllParams::calculate(26_000_000, 48000);
+        assert_eq!(res, Some(PLL_PARAM_26M_48K));
     }
 }
 

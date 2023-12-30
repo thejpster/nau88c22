@@ -1439,7 +1439,7 @@ bitfield! {
     /// [`modify_pllk2`](crate::Codec::modify_pllk2)
     pub struct PllK2(u16);
     impl Debug;
-    u8;
+    u16;
     /// Middle order bits of fractional portion of PLL input/output frequency
     /// ratio divider.
     ///
@@ -1455,7 +1455,7 @@ bitfield! {
     /// [`modify_pllk3`](crate::Codec::modify_pllk3)
     pub struct PllK3(u16);
     impl Debug;
-    u8;
+    u16;
     /// Low order bits of fractional portion of PLL input/output frequency ratio
     /// divider.
     ///
