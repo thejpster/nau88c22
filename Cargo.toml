@@ -3,16 +3,19 @@
 # SPDX-License-Identifier: MIT OR Apache-2.0
 
 [package]
-name = "nau88c22"
-version = "0.1.0"
+description = "Driver for the I2C register interface on the Nuvoton NAU882CC Audio CODEC"
 edition = "2021"
+keywords = ["nuvoton", "nau882cc", "embedded-hal", "i2c"]
+license = "MIT OR Apache-2.0"
+name = "nau88c22"
+version = "0.9.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-embedded-hal = "1.0.0"
 bitfield = "0.14"
-defmt = { version = "0.3.5", optional = true }
+defmt = {version = "0.3.5", optional = true}
+embedded-hal = "1.0.0"
 
 [features]
 defmt = ["dep:defmt"]
