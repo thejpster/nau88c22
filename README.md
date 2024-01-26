@@ -6,7 +6,11 @@ Rust driver for the register interface on the Nuvoton NAU88C22 CODEC chip.
 
 ### Unreleased Changes
 
-* First version
+* None
+
+### v0.9.0 - 2024-01-26
+
+* First release
 
 ## Licence
 
